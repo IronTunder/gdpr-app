@@ -1,0 +1,14 @@
+{
+  "name": "gdpr-app",
+  "version": "1.0.0",
+  "description": "Chat temporanea GDPR no account con React e Socket.IO",
+  "main": "index.js",
+  "scripts": {
+    "client": "npm.cmd --prefix client run dev",
+    "server": "npm.cmd --prefix server run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
