@@ -39,7 +39,7 @@ npm.cmd --prefix server run dev
 Frontend:
 
 ```powershell
-npm.cmd --prefix client run dev
+npm.cmd --prefix client run dev -- --host 0.0.0.0
 ```
 
 Poi visita `http://localhost:5173` dal computer che ospita l'app, oppure
