@@ -13,9 +13,6 @@ senza registrazione e senza persistenza lato server.
 - Allegati effimeri fino a 5 MB, inviati in memoria via Socket.IO e mai salvati
   su disco.
 - Anteprima inline per immagini e GIF, link download per gli altri file.
-- Scroll interno: quando ci sono molti messaggi scorre solo la chat, non tutta
-  la pagina.
-- Composer sempre visibile in fondo alla schermata.
 - Badge notifiche su titolo e favicon quando la scheda non e attiva.
 - Pulizia automatica lato client: vengono mantenuti solo gli ultimi 200
   messaggi per evitare sovraccarichi del browser.

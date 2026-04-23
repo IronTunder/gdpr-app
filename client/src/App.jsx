@@ -142,9 +142,11 @@ function App() {
   const [isSending, setIsSending] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const [status, setStatus] = useState('disconnected')
+  const [showPrivacyInfo, setShowPrivacyInfo] = useState(false)
   const fileInputRef = useRef(null)
   const messagesRef = useRef(null)
   const originalFaviconRef = useRef(null)
+  const privacyPopupRef = useRef(null)
   const socketRef = useRef(null)
 
   function emitEncrypted(eventName, payload = {}) {
@@ -272,6 +274,32 @@ function App() {
       window.removeEventListener('focus', clearUnreadCount)
     }
   }, [])
+
+  useEffect(() => {
+    if (!showPrivacyInfo) return
+
+    function handlePointerDown(event) {
+      if (!privacyPopupRef.current?.contains(event.target)) {
+        setShowPrivacyInfo(false)
+      }
+    }
+
+    function handleEscape(event) {
+      if (event.key === 'Escape') {
+        setShowPrivacyInfo(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('touchstart', handlePointerDown)
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('touchstart', handlePointerDown)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showPrivacyInfo])
 
   useEffect(() => {
     if (nickname && socketRef.current && !socketRef.current.connected) {
@@ -437,25 +465,61 @@ function App() {
   return (
     <main className="shell chat-shell">
       <header className="chat-header">
-        <div>
-          <p className="eyebrow">Sessione effimera</p>
-          <h1>Chat Temporanea</h1>
+        <div className="chat-heading">
+          <div className="heading-meta">
+            <p className="eyebrow">Sessione effimera</p>
+            <span className={`status ${status}`}>{status}</span>
+          </div>
+          <div className="heading-row">
+            <h1>Chat Temporanea</h1>
+            <button
+              className="disconnect-button"
+              onClick={leaveChat}
+              type="button"
+            >
+              Esci
+            </button>
+          </div>
         </div>
         <div className="identity">
-          <span className={`status ${status}`}>{status}</span>
-          <strong>{nickname}</strong>
-          <button className="disconnect-button" onClick={leaveChat} type="button">
-            Esci
-          </button>
+          <div className="identity-row">
+            <strong>{nickname}</strong>
+            <div className="privacy-popup-wrap" ref={privacyPopupRef}>
+              <button
+                aria-controls="privacy-info-popup"
+                aria-expanded={showPrivacyInfo}
+                aria-label="Informazioni privacy"
+                className="info-icon-button"
+                onClick={() => setShowPrivacyInfo((current) => !current)}
+                type="button"
+              >
+                i
+              </button>
+              {showPrivacyInfo ? (
+                <>
+                  <button
+                    aria-label="Chiudi informazioni privacy"
+                    className="privacy-popup-backdrop"
+                    onClick={() => setShowPrivacyInfo(false)}
+                    type="button"
+                  />
+                  <section
+                    aria-label="Garanzie privacy"
+                    className="privacy-popup"
+                    id="privacy-info-popup"
+                  >
+                    <h2>Privacy</h2>
+                    <span>Cifratura XOR in transito</span>
+                    <span>Nessun account</span>
+                    <span>Nessun database</span>
+                    <span>Nessuna cronologia server</span>
+                  </section>
+                </>
+              ) : null}
+            </div>
+          </div>
         </div>
       </header>
-
-      <section className="privacy-strip" aria-label="Garanzie privacy">
-        <span>Cifratura XOR in transito</span>
-        <span>Nessun account</span>
-        <span>Nessun database</span>
-        <span>Nessuna cronologia server</span>
-      </section>
 
       <section className="messages" aria-live="polite" ref={messagesRef}>
         {messages.length === 0 ? (
